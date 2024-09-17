@@ -40,7 +40,7 @@ class Board:
         row, col = cell
 
         value = self.board[row][col]
-        if value == -1:
+        if value == -1 or value == 10:
             mine.open_cell(row, col)
         return
 
@@ -74,6 +74,9 @@ class Minesweeper(Board):
                 n -= 1
 
     def open_cell(self, row, col):
+        if self.board[row][col] == 10:
+            self.board[row][col] = 11
+            return
         if self.board[row][col] != -1:
             return
         mines = 0
@@ -103,6 +106,9 @@ class Minesweeper(Board):
         num = self.font.render(str(value), True, (100, 255, 100))
         screen.blit(num, (x + self.cell_size // 10, y + self.cell_size // 10))
 
+    def end_game(self):
+        self.to_deault()
+
     def render(self, screen):
         self.top_menu_draw_text(screen)
 
@@ -111,9 +117,10 @@ class Minesweeper(Board):
                 x = col_index * self.cell_size + self.left
                 y = row_index * self.cell_size + self.top
                 value = self.board[row_index][col_index]
-                if value == 10:
+                if value == 11:
                     pygame.draw.rect(screen, 'red', (x, y, self.cell_size, self.cell_size))
-                elif value >= 0:
+                    self.end_game()
+                elif 0 <= value < 10:
                     self.draw_num(x, y, value)
                 pygame.draw.rect(screen, 'grey50', (x, y, self.cell_size, self.cell_size), 1)
 
